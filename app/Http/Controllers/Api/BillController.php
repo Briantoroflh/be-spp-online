@@ -14,13 +14,13 @@ class BillController extends Controller
     public function index(string $id) {
         $bill = Bill::with(['student','spp'])->select(
             'id_bill',
-            'student_id as student',
-            'spp_id as spp',
+            'student_id',
+            'spp_id',
             'month',
             'year',
             'amount',
             'status'
-        )->where('id_bill', $id)->get();
+        )->where('student_id', $id)->get();
 
         if(!$bill){
             return ApiRes::error("Bill not yet!", 404);
