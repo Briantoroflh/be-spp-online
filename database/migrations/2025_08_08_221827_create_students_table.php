@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->uuid('id_student')->primary();
             $table->uuid('classes_id');
-            $table->char('nisn', 10)->unique();
-            $table->char('nis', 8)->unique();
+            $table->integer('code_otp')->nullable();
+            $table->integer('nisn')->unique();
+            $table->integer('nis')->unique();
+            $table->string('password');
+            $table->string('email');
             $table->string('name');
             $table->string('alamat');
             $table->string('no_telp', 13);
