@@ -46,6 +46,52 @@ class AuthController extends Controller
         return ApiRes::success(new StudentResource($student), 'Login Success!', 200, $credential_token, $refresh_token);
     }
 
+    public function ForgotPasswordStudent(ForgotPasswordReq $req)
+    {
+        $validated = $req->validated();
+
+        $user = Student::where('email', $validated['email'])->first();
+
+        if (!$user) {
+            return response()->json(['message' => "Email not registered!"], 404);
+        }
+
+        $otp = rand(1000, 9999);
+
+        $user->update([
+            'code_otp' => $otp
+        ]);
+
+        Mail::to($validated['email'])->send(new ResetPasswordMail($otp, $user));
+
+        return response()->json(['message' => 'Otp has been sent.'], 200);
+    }
+
+    public function VerifyOTPStudent(VerifyOTPReq $req)
+    {
+        $validated = $req->validated();
+
+        $user = Student::where('email', $validated['email'])->first();
+
+        if ($user->code_otp != $validated['otp']) {
+            return response()->json(['message' => 'Wrong OTP code!'], 400);
+        }
+
+        return response()->json(['message' => 'OTP verified!'], 200);
+    }
+
+    public function ResetPasswordStudent(ResetPasswordReq $req)
+    {
+        $validated = $req->validated();
+
+        $user = Student::where('email', $validated['email'])
+            ->where('code_otp', $validated['otp'])->first();
+
+        $user->update(['password' => Hash::make($validated['password'])]);
+
+        return response()->json(['message' => 'Reset password success!'], 200);
+    }
+
     public function LoginForOfficer(LoginForOfficerReq $req)
     {
         $validated = $req->validated();
@@ -66,45 +112,6 @@ class AuthController extends Controller
             ->plainTextToken;
 
         return ApiRes::success($officer, 'Login Success!', 200, $credential_token, $refresh_token);
-    }
-
-    public function Me()
-    {
-        $user = Auth::user();
-
-        return ApiRes::success($user, "Data retrivied!");
-    }
-
-    public function RefreshToken(Request $req): JsonResponse
-    {
-
-        $user = $req->user();
-
-        $at_expration = 60 * 24;
-        $credential_token = $user->createToken(config("app.api_key"), ['access-token'], Carbon::now()->addMinutes($at_expration))
-            ->plainTextToken;
-
-        return ApiRes::success($credential_token, 'Refresh token success!');
-    }
-
-    public function ForgotPasswordStudent(ForgotPasswordReq $req) {
-        $validated = $req->validated();
-
-        $user = Student::where('email', $validated['email'])->first();
-
-        if (!$user) {
-            return response()->json(['message' => "Email not registered!"], 404);
-        }
-
-        $otp = rand(1000, 9999);
-
-        $user->update([
-            'code_otp' => $otp
-        ]);
-
-        Mail::to($validated['email'])->send(new ResetPasswordMail($otp, $user));
-
-        return response()->json(['message' => 'Otp has been sent.'], 200);
     }
 
     public function ForgotPasswordOfficer(ForgotPasswordReq $req)
@@ -128,17 +135,7 @@ class AuthController extends Controller
         return response()->json(['message' => 'Otp has been sent.'], 200);
     }
 
-    public function VerifyOTPStudent(VerifyOTPReq $req) {
-        $validated = $req->validated();
-
-        $user = Student::where('email', $validated['email'])->first();
-
-        if($user->code_otp != $validated['otp']){
-            return response()->json(['message' => 'Wrong OTP code!'], 400);
-        }
-
-        return response()->json(['message' => 'OTP verified!'], 200);
-    }
+    
 
     public function VerifyOTPOfficer(VerifyOTPReq $req)
     {
@@ -153,17 +150,6 @@ class AuthController extends Controller
         return response()->json(['message' => 'OTP verified!'], 200);
     }
 
-    public function ResetPasswordStudent(ResetPasswordReq $req) {
-        $validated = $req->validated();
-
-        $user = Student::where('email', $validated['email'])
-                ->where('code_otp', $validated['otp'])->first();
-
-        $user->update(['password' => Hash::make($validated['password'])]);
-
-        return response()->json(['message' => 'Reset password success!'], 200);
-    }
-
     public function ResetPasswordOfficer(ResetPasswordReq $req)
     {
         $validated = $req->validated();
@@ -174,6 +160,25 @@ class AuthController extends Controller
         $user->update(['password' => Hash::make($validated['password'])]);
 
         return response()->json(['message' => 'Reset password success!'], 200);
+    }
+
+    public function Me()
+    {
+        $user = Auth::user();
+
+        return ApiRes::success($user, "Data retrivied!");
+    }
+
+    public function RefreshToken(Request $req): JsonResponse
+    {
+
+        $user = $req->user();
+
+        $at_expration = 60 * 24;
+        $credential_token = $user->createToken(config("app.api_key"), ['access-token'], Carbon::now()->addMinutes($at_expration))
+            ->plainTextToken;
+
+        return ApiRes::success($credential_token, 'Refresh token success!');
     }
 
     public function Logout(Request $req): JsonResponse

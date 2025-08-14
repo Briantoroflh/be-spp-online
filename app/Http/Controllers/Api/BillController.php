@@ -29,8 +29,10 @@ class BillController extends Controller
         return ApiRes::success(BillResource::collection($bill), 'Data retrieved!');
     }
 
-    public function show(string $id) {
-        $bill = Bill::findOrFail($id);
+    public function show(string $idBill, string $idStudent) {
+        $bill = Bill::where('id_bill', $idBill)
+                ->where('student_id', $idStudent)
+                ->first();
 
         if(!$bill) {
             return ApiRes::error('Bill not found!', 404);
