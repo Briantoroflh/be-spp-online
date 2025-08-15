@@ -29,9 +29,9 @@ Route::middleware(['auth:sanctum', 'ability:access-token'])->group(function () {
     Route::post("/payment", [PaymentController::class, 'store']);
     
     Route::middleware(['role:admin'])->group(function () {
-        Route::apiResource("/spp", [ManageSppController::class]);
-        Route::apiResource("/student", [ManageStudentController::class]);
-        Route::apiResource("/officer", [ManageOfficerController::class]);
+        Route::apiResource("/spp", ManageSppController::class);
+        Route::apiResource("/student", ManageStudentController::class);
+        Route::apiResource("/officer", ManageOfficerController::class);
     });
 
     Route::middleware(['role:officer'])->group(function () {
