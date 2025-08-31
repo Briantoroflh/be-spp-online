@@ -3,21 +3,19 @@
 namespace App\Helpers;
 
 class ApiRes {
-    public static function success($data = null, $message = 'Success', $statusCode = 200, $token = '', $refreshToken = '')
+    public static function successResponse($message = "", $data = null, $statusCode = 200)
     {
         return response()->json([
-            'status' => true,
+            'success' => true,
             'message' => $message,
-            'data' => $data,
-            'access_token' => $token,
-            'refresh_token' => $refreshToken
+            'data' => $data
         ], $statusCode);
     }
 
-    public static function error($message = 'Error', $statusCode = 400, $errors = null)
+    public static function errorResponse($message = "", $errors = null, $statusCode = 400)
     {
         return response()->json([
-            'status' => false,
+            'success' => false,
             'message' => $message,
             'errors' => $errors
         ], $statusCode);

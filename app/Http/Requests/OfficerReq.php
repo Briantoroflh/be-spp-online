@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Student;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StudentReq extends FormRequest
+class OfficerReq extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,14 +22,9 @@ class StudentReq extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'nisn' => 'required|integer',
-            'nipd' => 'required|integer',
-            'email' => 'required|email',
+            'username' => 'required|string',
             'password' => 'required|string',
-            'age' => 'required|integer',
-            'classes' => 'required|string',
-            'major' => 'required|string',
+            'email' => 'required|string'
         ];
     }
 }

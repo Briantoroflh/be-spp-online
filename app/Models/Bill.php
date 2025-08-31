@@ -3,30 +3,37 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Bill extends Model
 {
-    use HasUuids;
+    use HasFactory, HasUuids;
 
-    protected $primaryKey = 'id_bill';
+    protected $table = 'bills';
+    protected $primaryKey = 'uuid';
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = ['student_id', 'spp_id', 'month', 'year', 'amount', 'status'];
+    protected $fillable = [
+        'uuid',
+        'student_uuid',
+        'detail_bill_uuid',
+        'year',
+    ];
 
     public function student()
     {
-        return $this->belongsTo(Student::class, 'student_id');
+        return $this->belongsTo(Student::class, 'student_uuid', 'uuid');
     }
 
-    public function spp()
+    public function detailBill()
     {
-        return $this->belongsTo(Spp::class, 'spp_id');
+        return $this->belongsTo(DetailBill::class, 'detail_bill_uuid', 'uuid');
     }
 
-    public function detailPayments()
+    public function currentBills()
     {
-        return $this->hasMany(DetailPayment::class, 'bill_id');
+        return $this->hasMany(CurrentBill::class, 'bill_uuid', 'uuid');
     }
 }

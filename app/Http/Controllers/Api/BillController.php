@@ -4,67 +4,75 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\ApiRes;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Bill\BillReq;
-use App\Http\Resources\BillResource;
+use App\Http\Requests\BillReq;
+use App\Http\Resources\BillRes;
 use App\Models\Bill;
+use Exception;
 use Illuminate\Http\Request;
 
 class BillController extends Controller
 {
-    public function index(string $id) {
-        $bill = Bill::with(['student','spp'])->select(
-            'id_bill',
-            'student_id',
-            'spp_id',
-            'month',
-            'year',
-            'amount',
-            'status'
-        )->where('student_id', $id)->get();
+    public function index() {
+        $bill = Bill::all();
 
-        if(!$bill){
-            return ApiRes::error("Bill not yet!", 404);
+        if($bill->count() < 1) {
+            return ApiRes::errorResponse("Data bill belum ada!", null, 404);
         }
 
-        return ApiRes::success(BillResource::collection($bill), 'Data retrieved!');
+        return ApiRes::successResponse("Data bill berhasil di ambil!", BillRes::collection($bill));
     }
 
-    public function show(string $idBill, string $idStudent) {
-        $bill = Bill::where('id_bill', $idBill)
-                ->where('student_id', $idStudent)
-                ->first();
+    public function show($uuid){
+        $bill = Bill::where('uuid', $uuid)->first();
 
-        if(!$bill) {
-            return ApiRes::error('Bill not found!', 404);
+        if(!$bill){
+            return ApiRes::errorResponse("Bill dengan uuid {$uuid} tidak ditemukan!", null, 404);
         }
 
-        return ApiRes::success($bill, 'Data retrieved!');
+        return ApiRes::successResponse("Data bill ditemukan!", new BillRes($bill));
     }
 
     public function store(BillReq $req) {
         $validated = $req->validated();
 
-        $bill = new Bill();
-        $bill->fill($validated);
-        $bill->save();
+        try{
+            $bill = new Bill();
+            $bill->fill($validated);
+            $bill->save();
+        }catch(Exception $err){
+            return ApiRes::errorResponse($err->getMessage(), null, 500);
+        }
 
-        return ApiRes::success($bill, 'Bill success created!');
+        return ApiRes::successResponse("Bill berhasil dibuat!");
     }
 
-    public function update(BillReq $req, string $id)
-    {
+    public function update(BillReq $req, $uuid){
         $validated = $req->validated();
 
-        $bill = new Bill();
-        $bill->update($validated);
+        $bill = Bill::where('uuid', $uuid)->first();
 
-        return ApiRes::success($bill, 'Bill success created!');
+        try{
+            $bill->update($validated);
+        }catch(Exception $err){
+            return ApiRes::errorResponse($err->getMessage(), null, 500);
+        }
+
+        return ApiRes::successResponse("Bill berhasil diubah!");
     }
 
-    public function destroy(string $id) {
-        $bill = Bill::findOrFail($id);
+    public function destroy($uuid) {
+        $bill = Bill::where('uuid', $uuid)->first();
 
-        $bill->delete();
-        return ApiRes::success($bill, 'Bill success deleted!');
+        if (!$bill) {
+            return ApiRes::errorResponse("Bill dengan uuid {$uuid} tidak ditemukan!", null, 404);
+        }
+
+        try{
+            $bill->delete();
+        }catch(Exception $err){
+            return ApiRes::errorResponse($err->getMessage(), null, 500);
+        }
+
+        return ApiRes::successResponse("Bill berhasil dihapus!");
     }
 }

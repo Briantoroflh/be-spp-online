@@ -6,28 +6,27 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Student extends Model
+class CurrentBill extends Model
 {
     use HasFactory, HasUuids;
 
+    protected $table = 'current_bills';
     protected $primaryKey = 'uuid';
     public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [
-        'name',
-        'nisn',
-        'nipd',
-        'email',
-        'password',
-        'age',
-        'classes',
-        'major',
-        'code_otp'
+        'uuid',
+        'bill_uuid',
+        'month',
+        'start_date',
+        'due_date',
+        'status',
+        'description',
     ];
 
-    public function bills()
+    public function bill()
     {
-        return $this->hasMany(Bill::class, 'student_uuid');
+        return $this->belongsTo(Bill::class, 'bill_uuid', 'uuid');
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Student extends Model
+class Role extends Model
 {
     use HasFactory, HasUuids;
 
@@ -14,20 +14,10 @@ class Student extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = [
-        'name',
-        'nisn',
-        'nipd',
-        'email',
-        'password',
-        'age',
-        'classes',
-        'major',
-        'code_otp'
-    ];
+    protected $fillable = ['name', 'description'];
 
-    public function bills()
+    public function officers()
     {
-        return $this->hasMany(Bill::class, 'student_uuid');
+        return $this->belongsToMany(Officer::class, 'officer_roles', 'role_uuid', 'officer_uuid');
     }
 }

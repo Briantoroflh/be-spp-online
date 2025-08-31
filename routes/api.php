@@ -2,41 +2,45 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BillController;
+use App\Http\Controllers\Api\CurrentBillController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\DetailBillController;
 use App\Http\Controllers\Api\ManageOfficerController;
 use App\Http\Controllers\Api\ManageSppController;
 use App\Http\Controllers\Api\ManageStudentController;
+use App\Http\Controllers\Api\OfficerController;
 use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\RoleController;
+use App\Http\Controllers\Api\StudentController;
+use App\Models\CurrentBill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-//auth for student mobile or web
-Route::post("/login-student", [AuthController::class, 'LoginForStudent']);
-Route::post("/forgot-password-student", [AuthController::class, 'ForgotPasswordStudent']);
-Route::post("/verify-otp-student", [AuthController::class, 'VerifyOTPStudent']);
-Route::post("/reset-password-student", [AuthController::class, 'ResetPasswordStudent']);
+//Officer Authentication
+Route::post('/officer/login', [AuthController::class, 'officerLogin']);
+Route::post('/officer/forgot-password', [AuthController::class, 'officerForgotPassword']);
+Route::post('/officer/verify-otp', [AuthController::class, 'officerVerifyOTP']);
+Route::post('/officer/reset-password', [AuthController::class, 'officerResetPassword']);
 
-//auth for officer web
-Route::post("/login-officer", [AuthController::class, 'LoginForOfficer']);
-Route::post("/forgot-password-officer", [AuthController::class, 'ForgotPasswordOfficer']);
-Route::post("/verify-otp-officer", [AuthController::class, 'VerifyOTPOfficer']);
-Route::post("/reset-password-officer", [AuthController::class, 'ResetPasswordOfficer']);
+//Student Authentication
+Route::post('/student/login', [AuthController::class, 'studentLogin']);
+Route::post('/student/forgot-password', [AuthController::class, 'studentForgotPassword']);
+Route::post('/student/verify-otp', [AuthController::class, 'studentVerifyOTP']);
+Route::post('/student/reset-password', [AuthController::class, 'studentResetPassword']);
 
 Route::middleware(['auth:sanctum', 'ability:access-token'])->group(function () {
-    Route::get("/me", [AuthController::class, 'Me']);
 
-    Route::get("/bill-spp-student/{id}", [BillController::class, 'index']);
-    Route::get("/bill-spp-student/{idBill}/{idStudent}", [BillController::class, 'show']);
-    Route::post("/payment", [PaymentController::class, 'store']);
-    
-    Route::middleware(['role:admin'])->group(function () {
-        Route::apiResource("/spp", ManageSppController::class);
-        Route::apiResource("/student", ManageStudentController::class);
-        Route::apiResource("/officer", ManageOfficerController::class);
+    Route::get('/current-bill/{id}', [CurrentBillController::class, 'getCurrentBillByUuidStudent']);
+    Route::get('/detail-bill', [DetailBillController::class. '']);
+
+    Route::middleware('role:admin')->group(function () {
+        Route::apiResource('/student', StudentController::class);
+        Route::apiResource('/role', RoleController::class);
+        Route::apiResource('/officer', OfficerController::class);
     });
 
-    Route::middleware(['role:officer'])->group(function () {
-        Route::post("/create-bill-student", [BillController::class, 'store']);
-        Route::post("/update-bill-student", [BillController::class, 'update']);
-        Route::post("/delete-bill-student", [BillController::class, 'destroy']);
+    Route::middleware('role:tu')->group(function () {
+        Route::apiResource('/bill', BillController::class);
+        Route::apiResource('/detail-bill', DetailBillController::class);
     });
 });

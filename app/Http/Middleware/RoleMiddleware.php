@@ -2,6 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\ApiRes;
+use App\Models\OfficerRole;
+use App\Models\Role;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,16 +16,21 @@ class RoleMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        $severalRole = explode("|", $role);
+        $user = $request->user();
 
-        if (!in_array($request->user()->role, $severalRole)) {
-            return response()->json([
-                'status' => 403,
-                'message' => 'You dont have permission!'
-            ], 403);
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
         }
-        return $next($request);
+
+        // Cek apakah officer punya salah satu role yang dibutuhkan
+        foreach ($roles as $role) {
+            if ($user->hasRole($role)) {
+                return $next($request);
+            }
+        }
+
+        return response()->json(['message' => 'Forbidden - You don\'t have access'], 403);
     }
 }
