@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('detail_bills', function (Blueprint $table) {
             $table->uuid('uuid')->primary();
             $table->integer('nominal_bill');
+            $table->integer('tax_bill');
             $table->dateTime('start_at');
             $table->dateTime('end_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

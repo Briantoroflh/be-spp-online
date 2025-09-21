@@ -13,16 +13,18 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->uuid('uuid')->primary();
-            $table->string('name');
-            $table->bigInteger('nisn')->unique();
-            $table->bigInteger('nipd')->unique();
-            $table->string('email')->unique();
-            $table->string('password');
+            $table->uuid('user_uuid');
+            $table->string('name')->index();
+            $table->bigInteger('nisn')->unique()->index();
+            $table->bigInteger('nik')->unique();
             $table->integer('age');
+            $table->text('address');
             $table->string('classes');
-            $table->string('major');
-            $table->integer('code_otp')->nullable();
+            $table->string('major')->index();
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('user_uuid')->references('uuid')->on('users')->cascadeOnDelete();
         });
     }
 

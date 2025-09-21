@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('schools', function (Blueprint $table) {
             $table->uuid('uuid')->primary();
-            $table->uuid('current_bill_uuid');
             $table->uuid('user_uuid');
-            $table->integer('nominal_payment');
-            $table->string('method_payment')->index();
-            $table->date('payment_date')->index();
-            $table->string('status');
+            $table->string('name')->index();
+            $table->string('photo');
+            $table->string('region')->index();
+            $table->string('city')->index();
+            $table->text('address');
+            $table->string('type_school')->index();
+            $table->boolean('isVerified');
             $table->timestamps();
             $table->softDeletes();
-            $table->unique(['current_bill_uuid', 'user_uuid']);
 
-            $table->foreign('current_bill_uuid')->references('uuid')->on('current_bills')->cascadeOnDelete();
             $table->foreign('user_uuid')->references('uuid')->on('users')->cascadeOnDelete();
         });
     }
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('officers');
     }
 };

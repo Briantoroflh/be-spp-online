@@ -17,10 +17,11 @@ return new class extends Migration
             $table->uuid('detail_bill_uuid');
             $table->integer('year');
             $table->timestamps();
+            $table->softDeletes();
+            $table->unique(['student_uuid', 'detail_bill_uuid']);
 
-            // Foreign Keys
-            $table->foreign('student_uuid')->references('uuid')->on('students')->onDelete('cascade');
-            $table->foreign('detail_bill_uuid')->references('uuid')->on('detail_bills')->onDelete('cascade');
+            $table->foreign('student_uuid')->references('uuid')->on('students')->cascadeOnDelete();
+            $table->foreign('detail_bill_uuid')->references('uuid')->on('detail_bills')->cascadeOnDelete();
         });
     }
 

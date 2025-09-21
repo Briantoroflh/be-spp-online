@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class StudentSeeder extends Seeder
 {
@@ -14,15 +14,17 @@ class StudentSeeder extends Seeder
      */
     public function run(): void
     {
+        $student = User::role("Student")->first();
+
         Student::create([
-            'name' => 'Budi Santoso',
-            'nisn' => 1234567890,
-            'nipd' => 20250001,
-            'email' => 'budi@example.com',
-            'password' => Hash::make('password123'),
-            'age' => 16,
-            'classes' => 'XI RPL 1',
-            'major' => 'Rekayasa Perangkat Lunak',
+            'user_uuid' => $student->uuid,
+            'name' => 'Rusdi gaming',
+            'nisn' => '0987654567',
+            'nik' => '098765678',
+            'age' => 14,
+            'address' => 'Jasindo',
+            'classes' => 'XI',
+            'major' => 'RPL'
         ]);
     }
 }

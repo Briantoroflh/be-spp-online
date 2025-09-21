@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('current_bills', function (Blueprint $table) {
             $table->uuid('uuid')->primary();
             $table->uuid('bill_uuid');
-            $table->string('month');
+            $table->string('month')->index();
             $table->date('start_date');
             $table->date('due_date');
-            $table->enum('status', ['belum lunas', 'lunas', 'jatuh tempo'])->default('belum lunas');
-            $table->string('description')->nullable();
+            $table->string('status')->index();
+            $table->text('description')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
-            // Foreign Key
-            $table->foreign('bill_uuid')->references('uuid')->on('bills')->onDelete('cascade');
+            $table->foreign('bill_uuid')->references('uuid')->on('bills')->cascadeOnDelete();
         });
     }
 

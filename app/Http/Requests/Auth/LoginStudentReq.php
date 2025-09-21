@@ -4,7 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginForOfficerReq extends FormRequest
+class LoginStudentReq extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class LoginForOfficerReq extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|string',
+            'nisn' => 'required|string',
             'password' => 'required|string'
         ];
     }

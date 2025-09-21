@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
 
 class Student extends Model
 {
@@ -15,16 +16,25 @@ class Student extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
+        'user_uuid',
+        'school_uuid',
+        'photo',
         'name',
         'nisn',
         'nipd',
-        'email',
-        'password',
         'age',
+        'address',
         'classes',
         'major',
-        'code_otp'
     ];
+
+    public function user() {
+        return $this->belongsTo(User::class, 'user_uuid');
+    }
+
+    public function school() {
+        $this->belongsTo(School::class, 'school_uuid');
+    }
 
     public function bills()
     {
