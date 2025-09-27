@@ -5,12 +5,12 @@ namespace App\Repositories;
 use App\Models\DetailBill;
 
 class DetailBillRepository {
-    public function getAll(array $fields) {
-        return DetailBill::select($fields)->latest()->paginate(10);
+    public function getAll() {
+        return DetailBill::latest()->paginate(10);
     }
 
     public function getByUuid(string $uuid) {
-        return DetailBill::where('uuid', $uuid)->firstOrFail();
+        return DetailBill::where('uuid', $uuid)->first();
     }
 
     public function create(array $data) {
@@ -18,7 +18,7 @@ class DetailBillRepository {
     }
 
     public function update(string $uuid, array $data) {
-        $detailBill = DetailBill::findOrFail($uuid);
+        $detailBill = DetailBill::where('uuid', $uuid)->first();
         $detailBill->update($data);
         return $detailBill;
     }

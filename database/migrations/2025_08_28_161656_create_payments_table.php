@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('uuid')->primary();
+            $table->string("code_payment");
             $table->uuid('current_bill_uuid');
             $table->uuid('user_uuid');
             $table->integer('nominal_payment');
-            $table->string('method_payment')->index();
+            $table->string('method_payment')->nullable()->index();
             $table->date('payment_date')->index();
             $table->string('status');
             $table->timestamps();

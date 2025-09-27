@@ -17,7 +17,6 @@ class Bill extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'uuid',
         'student_uuid',
         'detail_bill_uuid',
         'year',

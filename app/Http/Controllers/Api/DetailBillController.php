@@ -7,36 +7,30 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DetailBillReq;
 use App\Http\Resources\DetailBillRes;
 use App\Models\DetailBill;
+use App\Services\DetailBillService;
 use Exception;
 use Illuminate\Http\Request;
 
 class DetailBillController extends Controller
 {
+    private $detailBillService;
+
+    public function __construct(
+        DetailBillService $detailBillService
+    )
+    {
+        $this->detailBillService = $detailBillService;
+    }
+
     public function index()
     {
-        $detailBill = DetailBill::select(
-            'uuid',
-            'nominal_bill',
-            'start_at',
-            'end_at'
-        )->get();
-
-        if ($detailBill->count() < 1) {
-            return ApiRes::errorResponse("Data detail bill belum ada!", null, 404);
-        }
-
-        return ApiRes::successResponse("Data detail bill berhasil diambil!", DetailBillRes::collection($detailBill));
+        $detailBill = $this->detailBillService->getAll();
+        return ApiRes::successResponse("Data detail bill berhasil diambil!", $detailBill);
     }
 
     public function show($uuid)
     {
-        $detailBill = DetailBill::where('uuid', $uuid)->first();
-
-        if (!$detailBill) {
-            return ApiRes::errorResponse("Detail bill dengan uuid {$uuid} tidak ditemukan!", null, 404);
-        }
-
-        return ApiRes::successResponse("Detail Bill ditemukan!", new DetailBillRes($detailBill));
+       $detailBill = $this->detailBillService->
     }
 
     public function store(DetailBillReq $req)

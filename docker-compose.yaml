@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  laravel-franken:
+    container_name: laravel-franken
+    build: .
+    image: image_laravel_franken
+    ports:
+      - "8001:80"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: spp_online
+      MYSQL_USER: spponline
+      MYSQL_PASSWORD: brian120608
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

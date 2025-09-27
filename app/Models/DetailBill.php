@@ -17,7 +17,6 @@ class DetailBill extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'uuid',
         'nominal_bill',
         'tax_bill',
         'start_at',

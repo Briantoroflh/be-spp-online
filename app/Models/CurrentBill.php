@@ -17,7 +17,6 @@ class CurrentBill extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'uuid',
         'bill_uuid',
         'month',
         'start_date',
@@ -29,5 +28,9 @@ class CurrentBill extends Model
     public function bill()
     {
         return $this->belongsTo(Bill::class, 'bill_uuid', 'uuid');
+    }
+
+    public function payment() {
+        return $this->hasMany(Payment::class, 'current_bill_uuid');
     }
 }
